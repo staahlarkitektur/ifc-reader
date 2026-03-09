@@ -65,6 +65,11 @@ loadBtn.addEventListener("click", () => {
   fileInput.value = "";
 });
 
+// ── Utilities ─────────────────────────────────────────────────────────────────
+const esc = (s) => String(s)
+  .replace(/&/g, "&amp;").replace(/</g, "&lt;")
+  .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+
 // ── Floor Area from Geometry ──────────────────────────────────────────────────
 function computeFloorArea(meshDataArray) {
   const va = new THREE.Vector3(), vb = new THREE.Vector3(), vc = new THREE.Vector3();
@@ -81,7 +86,8 @@ function computeFloorArea(meshDataArray) {
       ab.subVectors(vb, va);
       ac.subVectors(vc, va);
       cross.crossVectors(ab, ac);
-      if (cross.y > 0) area += cross.length() * 0.5;
+      // Use abs(cross.y) so both Y-up and Z-up IFC models are handled correctly
+      area += Math.abs(cross.y) * 0.5;
     }
   }
 
@@ -91,7 +97,7 @@ function computeFloorArea(meshDataArray) {
 // ── Space Extraction ──────────────────────────────────────────────────────────
 async function extractSpacesFromModel(model) {
   const result = await model.getItemsOfCategories([/^IFCSPACE$/i]);
-  const spaceIds = result["IFCSPACE"] || result["IfcSpace"] || [];
+  const spaceIds = Object.values(result).flat();
 
   if (spaceIds.length === 0) return [];
 
@@ -164,9 +170,9 @@ function renderSpaces(spaces) {
       .map(
         (s) => `
         <div class="space-item">
-          <div class="space-name">${s.name}</div>
+          <div class="space-name">${esc(s.name)}</div>
           <div class="space-meta">
-            <span>${s.longName}</span>
+            <span>${esc(s.longName)}</span>
             <span class="space-area">${
               s.area !== null ? s.area.toFixed(2) + " m²" : "—"
             }</span>
@@ -195,7 +201,6 @@ async function loadIFC(file) {
       currentModel = null;
     }
 
-    ifcLoader.settings.autoSetWasm = false;
     currentModel = await ifcLoader.load(data, true, file.name);
     world.scene.three.add(currentModel.object);
 
@@ -257,6 +262,10 @@ samplesLoadBtn.addEventListener("click", async () => {
   const name = samplesSelect.value;
   if (!name) return;
   const res = await fetch(`/${name}`);
+  if (!res.ok) {
+    spacesList.innerHTML = `<p class="status-msg">Could not load sample: ${res.statusText}</p>`;
+    return;
+  }
   const buffer = await res.arrayBuffer();
   const file = new File([buffer], name, { type: "application/octet-stream" });
   loadIFC(file);

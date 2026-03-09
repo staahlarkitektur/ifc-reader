@@ -3,24 +3,26 @@ import path from "path";
 import { defineConfig } from "vite";
 import { viteStaticCopy } from "vite-plugin-static-copy";
 
+function listIfcFiles() {
+  const dir = path.resolve("public");
+  try {
+    return fs.readdirSync(dir).filter((f) => f.toLowerCase().endsWith(".ifc"));
+  } catch {
+    return [];
+  }
+}
+
 const sampleManifest = () => ({
   name: "sample-manifest",
   configureServer(server) {
+    const cached = JSON.stringify(listIfcFiles());
     server.middlewares.use("/samples.json", (_req, res) => {
-      const dir = path.resolve("public");
-      const files = fs.existsSync(dir)
-        ? fs.readdirSync(dir).filter((f) => f.toLowerCase().endsWith(".ifc"))
-        : [];
       res.setHeader("Content-Type", "application/json");
-      res.end(JSON.stringify(files));
+      res.end(cached);
     });
   },
   generateBundle() {
-    const dir = path.resolve("public");
-    const files = fs.existsSync(dir)
-      ? fs.readdirSync(dir).filter((f) => f.toLowerCase().endsWith(".ifc"))
-      : [];
-    this.emitFile({ type: "asset", fileName: "samples.json", source: JSON.stringify(files) });
+    this.emitFile({ type: "asset", fileName: "samples.json", source: JSON.stringify(listIfcFiles()) });
   },
 });
 
