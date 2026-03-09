@@ -41,7 +41,7 @@ if (postproduction.customEffects) {
 
 // ── Fragments Manager ─────────────────────────────────────────────────────────
 const fragments = components.get(OBC.FragmentsManager);
-fragments.init("/worker.mjs");
+fragments.init(import.meta.env.BASE_URL + "worker.mjs");
 
 world.renderer.onBeforeUpdate.add(() => fragments.core.update());
 
@@ -49,7 +49,7 @@ world.renderer.onBeforeUpdate.add(() => fragments.core.update());
 const ifcLoader = components.get(OBC.IfcLoader);
 await ifcLoader.setup({
   autoSetWasm: false,
-  wasm: { path: "/", absolute: false },
+  wasm: { path: import.meta.env.BASE_URL, absolute: false },
 });
 
 let currentModel = null;
@@ -244,7 +244,7 @@ fileInput.addEventListener("change", (e) => {
 });
 
 // ── Sample Files ──────────────────────────────────────────────────────────────
-fetch("/samples.json")
+fetch(import.meta.env.BASE_URL + "samples.json")
   .then((r) => r.json())
   .then((files) => {
     if (!files.length) return;
@@ -261,7 +261,7 @@ fetch("/samples.json")
 samplesLoadBtn.addEventListener("click", async () => {
   const name = samplesSelect.value;
   if (!name) return;
-  const res = await fetch(`/${name}`);
+  const res = await fetch(import.meta.env.BASE_URL + name);
   if (!res.ok) {
     spacesList.innerHTML = `<p class="status-msg">Could not load sample: ${res.statusText}</p>`;
     return;

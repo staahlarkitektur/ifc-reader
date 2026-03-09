@@ -27,6 +27,7 @@ const sampleManifest = () => ({
 });
 
 export default defineConfig({
+  base: "/ifc-reader/",
   plugins: [
     sampleManifest(),
     viteStaticCopy({
