@@ -15,6 +15,29 @@ const loadBtn = document.getElementById("load-btn");
 const samplesRow = document.getElementById("samples-row");
 const samplesSelect = document.getElementById("samples-select");
 const samplesLoadBtn = document.getElementById("samples-load-btn");
+const sidebarToggle = document.getElementById("sidebar-toggle");
+const sidebar = document.getElementById("sidebar");
+const content = document.querySelector(".content");
+
+// ── Sidebar Toggle (mobile) ───────────────────────────────────────────────────
+function triggerRendererResize() {
+  // Wait for CSS transition to finish (250ms) then notify Three.js of new size
+  setTimeout(() => window.dispatchEvent(new Event("resize")), 260);
+}
+
+sidebarToggle.addEventListener("click", () => {
+  const isOpen = sidebar.classList.toggle("open");
+  content.classList.toggle("sidebar-open", isOpen);
+  triggerRendererResize();
+});
+
+content.addEventListener("click", (e) => {
+  if (content.classList.contains("sidebar-open") && !sidebar.contains(e.target)) {
+    sidebar.classList.remove("open");
+    content.classList.remove("sidebar-open");
+    triggerRendererResize();
+  }
+});
 
 // ── 3D Scene Setup ────────────────────────────────────────────────────────────
 const components = new OBC.Components();
