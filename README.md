@@ -1,6 +1,6 @@
 # ifc-reader
 
-A quick boilerplate test case built with Claude Code to learn how to use it.
+A quick proof-of-concept built with Claude Code to explore how to use it.
 
 ## What it does
 
