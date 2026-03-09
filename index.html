@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IFC Viewer</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <!-- Drop zone -->
+    <div id="drop-zone">
+      <div class="drop-content">
+        <div class="drop-icon">↑</div>
+        <h1>IFC Viewer</h1>
+        <p>Drag &amp; drop an IFC file to begin</p>
+        <label class="browse-btn">
+          Browse file
+          <input type="file" id="file-input" accept=".ifc" hidden />
+        </label>
+        <div id="samples-row" class="samples-row hidden">
+          <select id="samples-select"></select>
+          <button id="samples-load-btn">Load sample</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- App -->
+    <div id="app" class="hidden">
+      <header>
+        <span id="file-name"></span>
+        <div class="toolbar">
+          <button id="fit-btn">Fit View</button>
+          <button id="load-btn">Load New File</button>
+        </div>
+      </header>
+      <div class="content">
+        <aside id="sidebar">
+          <div class="sidebar-header">
+            <span>Spaces</span>
+            <span id="space-count"></span>
+          </div>
+          <div id="spaces-list"></div>
+        </aside>
+        <div id="viewer-container"></div>
+      </div>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
